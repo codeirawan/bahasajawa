@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="jv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basa Jawa SD 🌿</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #f0faf4;
+  --bg2:       #e6f5ec;
+  --card:      #ffffff;
+  --border:    #c3e6d0;
+  --green:     #16a34a;
+  --green-l:   #dcfce7;
+  --green-d:   #15803d;
+  --amber:     #d97706;
+  --amber-l:   #fef3c7;
+  --blue:      #0284c7;
+  --blue-l:    #e0f2fe;
+  --red:       #dc2626;
+  --red-l:     #fee2e2;
+  --text:      #14532d;
+  --text2:     #166534;
+  --muted:     #86efac;
+  --correct:   #15803d;
+  --correct-bg:#dcfce7;
+  --wrong:     #dc2626;
+  --wrong-bg:  #fee2e2;
+  --shadow:    0 4px 20px rgba(22,163,74,.1);
+  --shadow-lg: 0 8px 40px rgba(22,163,74,.15);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Outfit',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* batik-inspired top bar */
+.batik-bar{
+  position:fixed;top:0;left:0;right:0;height:8px;z-index:100;
+  background:repeating-linear-gradient(
+    90deg,
+    #16a34a 0px, #16a34a 12px,
+    #d97706 12px, #d97706 24px,
+    #0284c7 24px, #0284c7 36px,
+    #7c3aed 36px, #7c3aed 48px
+  );
+}
+
+/* batik pattern background overlay */
+body::before{
+  content:'';
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(22,163,74,.05) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(217,119,6,.04) 0%, transparent 40%),
+    radial-gradient(circle at 50% 10%, rgba(2,132,199,.04) 0%, transparent 35%);
+}
+
+.container{
+  max-width:720px;
+  margin:0 auto;
+  padding:32px 16px 56px;
+  position:relative;z-index:1;
+}
+
+/* HEADER */
+header{text-align:center;margin-bottom:28px;padding-top:14px;}
+.header-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--green-l);color:var(--green-d);
+  font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  padding:5px 16px;border-radius:4px;margin-bottom:12px;
+  border:1.5px solid rgba(22,163,74,.25);
+}
+header h1{
+  font-family:'Playfair Display',serif;font-weight:800;font-size:2.8rem;
+  color:var(--green-d);line-height:1.1;
+}
+header h1 span{color:var(--amber);}
+header p{color:#4ade80;font-size:.88rem;margin-top:8px;font-weight:600;}
+
+/* TABS */
+.tabs{display:flex;gap:8px;justify-content:center;margin-bottom:22px;flex-wrap:wrap;}
+.tab{
+  padding:9px 22px;border-radius:6px;
+  border:2px solid var(--border);background:var(--card);
+  color:var(--text2);cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:.84rem;font-weight:700;
+  transition:all .18s;
+}
+.tab:hover{border-color:var(--green);color:var(--green);}
+.tab.active{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 4px 12px rgba(22,163,74,.3);}
+
+/* SCOREBAR */
+.scorebar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  background:var(--card);border:2px solid var(--border);
+  border-radius:12px;margin-bottom:18px;overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.sb-item{
+  text-align:center;padding:14px 8px;
+  border-right:2px solid var(--border);
+}
+.sb-item:last-child{border-right:none;}
+.sb-val{font-size:1.7rem;font-weight:900;line-height:1;}
+.sb-lbl{font-size:.62rem;color:#86efac;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;}
+.sb-val.green{color:var(--correct);}
+.sb-val.red{color:var(--wrong);}
+.sb-val.amber{color:var(--amber);}
+.sb-val.blue{color:var(--blue);}
+
+/* WULANGAN SELECTOR */
+.wulangan-wrap{
+  display:flex;gap:6px;justify-content:center;
+  margin-bottom:16px;flex-wrap:wrap;
+}
+.wul-btn{
+  padding:7px 14px;border-radius:6px;
+  border:2px solid var(--border);background:var(--card);
+  color:var(--text2);cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:800;
+  transition:all .18s;
+}
+.wul-btn:hover{border-color:var(--amber);color:var(--amber);}
+.wul-btn.active{
+  border-color:var(--amber);color:#fff;
+  background:var(--amber);box-shadow:0 3px 10px rgba(217,119,6,.3);
+}
+
+/* PROGRESS */
+.prog-label{display:flex;justify-content:space-between;font-size:.71rem;color:#86efac;font-weight:700;margin-bottom:5px;}
+.prog-wrap{background:var(--border);border-radius:99px;height:7px;margin-bottom:18px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--amber));border-radius:99px;transition:width .4s ease;}
+
+/* Q CARD */
+.q-card{
+  background:var(--card);border:2px solid var(--border);
+  border-radius:16px;padding:26px 22px;
+  margin-bottom:14px;box-shadow:var(--shadow);
+  animation:fadeUp .3s ease;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.q-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.q-badge{
+  display:inline-flex;align-items:center;
+  background:var(--green-l);color:var(--green-d);
+  font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  padding:4px 12px;border-radius:4px;border:1px solid rgba(22,163,74,.2);
+}
+.q-sub{font-size:.7rem;color:#4ade80;font-weight:700;background:var(--bg2);padding:4px 10px;border-radius:4px;}
+.diff-gampil{background:#dcfce7;color:#14532d;font-size:.66rem;font-weight:800;padding:4px 10px;border-radius:4px;}
+.diff-tengah{background:#fef3c7;color:#78350f;font-size:.66rem;font-weight:800;padding:4px 10px;border-radius:4px;}
+.diff-angel{background:#fee2e2;color:#7f1d1d;font-size:.66rem;font-weight:800;padding:4px 10px;border-radius:4px;}
+.diff-hots{background:#ede9fe;color:#4c1d95;font-size:.66rem;font-weight:800;padding:4px 10px;border-radius:4px;}
+
+.q-icon{font-size:2.6rem;display:block;text-align:center;margin-bottom:10px;animation:sway 3s ease-in-out infinite;}
+@keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+
+.q-ctx{
+  background:var(--bg2);border-left:4px solid var(--amber);
+  border-radius:0 10px 10px 0;padding:12px 14px;
+  font-size:.86rem;color:var(--text2);line-height:1.75;
+  margin-bottom:14px;font-style:italic;
+}
+.q-text{
+  font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;
+  color:var(--text);line-height:1.55;text-align:center;margin-bottom:6px;
+}
+
+/* OPTIONS */
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.option{
+  background:var(--bg);border:2px solid var(--border);
+  border-radius:10px;padding:13px 14px;
+  cursor:pointer;text-align:left;
+  font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600;
+  color:var(--text);transition:all .16s;
+  display:flex;align-items:center;gap:10px;
+}
+.option:hover:not(.disabled){
+  border-color:var(--green);background:var(--green-l);
+  transform:translateY(-2px);box-shadow:0 4px 12px rgba(22,163,74,.15);
+}
+.opt-letter{
+  width:26px;height:26px;border-radius:6px;flex-shrink:0;
+  background:var(--border);color:var(--text2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.76rem;font-weight:900;transition:all .16s;
+}
+.option:hover:not(.disabled) .opt-letter{background:var(--green);color:#fff;}
+.option.correct{border-color:var(--correct);background:var(--correct-bg);}
+.option.correct .opt-letter{background:var(--correct);color:#fff;}
+.option.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+.option.wrong .opt-letter{background:var(--wrong);color:#fff;}
+.option.disabled{cursor:not-allowed;opacity:.75;}
+
+/* FEEDBACK */
+.feedback{
+  text-align:center;padding:11px 14px;border-radius:10px;
+  font-size:.9rem;font-weight:700;margin-bottom:12px;
+  opacity:0;display:none;transition:opacity .2s;
+}
+.feedback.show{opacity:1;display:block;}
+.feedback.correct{background:var(--correct-bg);color:var(--correct);border:1.5px solid rgba(21,128,61,.25);}
+.feedback.wrong{background:var(--wrong-bg);color:var(--wrong);border:1.5px solid rgba(220,38,38,.2);}
+
+.pembahasan{
+  background:var(--amber-l);border:1.5px solid #fcd34d;
+  border-radius:10px;padding:10px 14px;margin-bottom:12px;
+  font-size:.81rem;color:#78350f;line-height:1.65;display:none;
+}
+.pembahasan.show{display:block;}
+.pembahasan strong{color:#92400e;}
+
+/* NAV */
+.nav-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.btn{
+  padding:10px 20px;border-radius:8px;
+  border:2px solid var(--border);background:var(--card);
+  color:var(--text2);cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:700;
+  transition:all .16s;
+}
+.btn:hover{border-color:var(--green);color:var(--green);}
+.btn.primary{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 4px 12px rgba(22,163,74,.3);}
+.btn.primary:hover{background:var(--green-d);}
+.btn.amber{border-color:var(--amber);color:var(--amber);}
+.btn.amber:hover{background:var(--amber-l);}
+
+/* RESULTS */
+.results{
+  background:var(--card);border:2px solid var(--border);
+  border-radius:16px;padding:36px 24px;text-align:center;
+  box-shadow:var(--shadow-lg);animation:fadeUp .4s ease;
+}
+.result-icon{font-size:4rem;margin-bottom:8px;display:block;}
+.result-score{
+  font-family:'Playfair Display',serif;font-size:5rem;font-weight:800;
+  color:var(--green-d);line-height:1;
+}
+.result-grade{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin:8px 0;}
+.result-desc{color:#4ade80;font-size:.88rem;margin-bottom:20px;}
+.result-breakdown{display:flex;gap:12px;justify-content:center;margin-bottom:24px;flex-wrap:wrap;}
+.rb-item{
+  background:var(--bg2);border:2px solid var(--border);
+  border-radius:10px;padding:12px 20px;text-align:center;
+}
+.rb-val{font-size:1.7rem;font-weight:900;}
+
+/* MATERI */
+.materi-card{
+  background:var(--card);border:2px solid var(--border);
+  border-radius:14px;padding:20px;margin-bottom:12px;
+  box-shadow:var(--shadow);
+}
+.materi-card h3{
+  font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;
+  color:var(--green);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.materi-card p{color:var(--text2);font-size:.85rem;line-height:1.75;margin-bottom:8px;}
+.materi-tag{
+  display:inline-block;background:var(--green-l);color:var(--green-d);
+  font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:4px;
+  margin:2px;border:1px solid rgba(22,163,74,.2);
+}
+.contoh-box{
+  background:var(--bg2);border-left:3px solid var(--amber);
+  border-radius:0 8px 8px 0;padding:10px 12px;margin-top:8px;
+  font-size:.83rem;color:var(--text);line-height:1.7;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;top:18px;right:14px;z-index:999;
+  background:var(--amber);color:#fff;font-weight:800;
+  padding:10px 18px;border-radius:8px;font-size:.82rem;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+  font-family:'Outfit',sans-serif;box-shadow:0 4px 20px rgba(217,119,6,.4);
+}
+.toast.show{opacity:1;}
+
+@media(max-width:500px){
+  header h1{font-size:2.1rem;}
+  .q-text{font-size:1rem;}
+  .options{grid-template-columns:1fr;}
+  .option{font-size:.84rem;}
+  .result-score{font-size:3.8rem;}
+}
+</style>
+</head>
+<body>
+<div class="batik-bar"></div>
+<div class="toast" id="toast"></div>
+<div class="container">
+
+<header>
+  <div class="header-badge">🌿 SD Kelas 1</div>
+  <h1>Basa <span>Jawa</span> 📜</h1>
+  <p>Gladhen Basa Jawa Kelas 1 SD • 50 Soal Pilihan Ganda</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('latihan')">🎯 Gladhen</button>
+  <button class="tab" onclick="switchTab('materi')">📖 Materi</button>
+</div>
+
+<!-- LATIHAN -->
+<div id="tab-latihan">
+  <div class="scorebar">
+    <div class="sb-item"><div class="sb-val green" id="sc-benar">0</div><div class="sb-lbl">Bener</div></div>
+    <div class="sb-item"><div class="sb-val red" id="sc-salah">0</div><div class="sb-lbl">Salah</div></div>
+    <div class="sb-item"><div class="sb-val amber" id="sc-streak">0🔥</div><div class="sb-lbl">Streak</div></div>
+    <div class="sb-item"><div class="sb-val blue" id="sc-no">1/10</div><div class="sb-lbl">Soal</div></div>
+  </div>
+
+  <div class="wulangan-wrap">
+    <button class="wul-btn active" onclick="setWulangan(1,this)">🌱 Wulangan 1-2</button>
+    <button class="wul-btn" onclick="setWulangan(2,this)">🌿 Wulangan 3-4</button>
+    <button class="wul-btn" onclick="setWulangan(3,this)">🍃 Sumatif</button>
+  </div>
+
+  <div class="prog-label">
+    <span id="prog-label">Soal 1 saka 10</span>
+    <span id="prog-pct">10%</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="progBar" style="width:10%"></div></div>
+
+  <div id="soal-area"></div>
+</div>
+
+<!-- MATERI -->
+<div id="tab-materi" style="display:none">
+  <div id="materi-area"></div>
+</div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   BANK SOAL — 50 SOAL BASA JAWA KELAS 1 SD
+   Sumber: Wulangan 4 (Tembang Dolanan) + Gladhen Sumatif Pungkasan Semester
+══════════════════════════════════════════════ */
+
+const SOAL = {
+
+/* ── Wulangan 1-2: Crita Fabel lan Tembang Dolanan (bagian awal) ── */
+1: [
+  {em:'🐘',sub:'Crita Fabel',diff:'gampil',
+   ctx:'Ing crita "Semut lan Gajah", Gajah seneng pamer kakuwatane.',
+   q:'Ing crita "Semut lan Gajah", Gajah kepengin dadi ....',
+   opts:['Mungsuhe Semut','Raja alas','Kancane Semut','Pawonge Semut'], ans:1,
+   p:'Gajah kepengin dadi raja alas amarga rumangsa paling gedhe lan kuat.'},
+  {em:'🐦',sub:'Crita Fabel',diff:'gampil',
+   q:'Jalak gelem notholi gegere Kebo jalaran ....',
+   opts:['Tuma pakanane Jalak','Cucuke Jalak gatel','Kebo kuwi cethil','Kebo ora ngajak'], ans:0,
+   p:'Jalak doyan mangan tuma sing ana ing gegere Kebo, mula Jalak gelem notholi.'},
+  {em:'🎵',sub:'Tembang Dolanan',diff:'gampil',
+   q:'Saliyane dadi panglipur, tembang dolanan uga ngemot ....',
+   opts:['Crita','Piwulang','Geguritan','Wacan'], ans:1,
+   p:'Tembang dolanan ora mung kanggo panglipur, nanging uga ngemot piwulang becik.'},
+  {em:'🦷',sub:'Ejaan lan Kosakata',diff:'gampil',
+   q:'Fioni … gigis amarga seneng mangan permen. Tembung kanggo ngisi ceceg-ceceg yaiku ....',
+   opts:['Sirahe','Untune','Drijine','Sikile'], ans:1,
+   p:'"Untune" tegese gigi. Fioni untune gigis amarga seneng mangan permen.'},
+  {em:'🎶',sub:'Tembang Dolanan',diff:'tengah',
+   q:'Irah-irahan tembang dolanan sing cocok kanggo bocah sing lagi dolanan yaiku ....',
+   opts:['Siji Loro Telu','Kidang Talun','Gambang Suling','Prau Layar'], ans:0,
+   p:'"Siji Loro Telu" irah-irahane cocok kanggo bocah amarga nyritakake ngetung.'},
+  {em:'🍳',sub:'Kosakata',diff:'gampil',
+   ctx:'Gambar bocah wadon lagi nyuci piring ing pawon.',
+   q:'Kegiyatane Dinda ditindakake ing ....',
+   opts:['Kamar','Pawon','Latar','Ruang tamu'], ans:1,
+   p:'Nyuci piring ditindakake ing pawon (dapur).'},
+  {em:'🌍',sub:'Agama',diff:'gampil',
+   q:'Sing nyiptakake kewan lan manungsa yaiku ....',
+   opts:['Raja','Bapak lan Ibu','Gusti','Guru'], ans:2,
+   p:'Gusti Allah sing nyiptakake kabeh titah, kalebu kewan lan manungsa.'},
+  {em:'📚',sub:'Pakulinan Apik',diff:'tengah',
+   ctx:'Gambar bocah lanang lagi njupuk buku ing rak buku.',
+   q:'Mumpangate kegiyatan ing gambar yaiku ....',
+   opts:['Buku kepenak diwaca','Ngrusak buku','Ora ana mumpangate','Gawe ngantuk'], ans:0,
+   p:'Njupuk lan maca buku nduweni mumpangat supaya tambah ilmu lan wawasan.'},
+  {em:'😄',sub:'Tembang/Paribasan',diff:'tengah',
+   ctx:'Ora jemu-jemu (…) karo mesem ngguyu ‖',
+   q:'Tandha kanggo ngisi ceceg-ceceg yaiku ....',
+   opts:['|','||','|||','….'], ans:0,
+   p:'Tandha (|) tegese mandheg sawetara, dene (||) kanggo pungkasane baris/pada.'},
+  {em:'🐘',sub:'Kewan',diff:'gampil',
+   q:'Kewan paling gedhe ing dharat yaiku ....',
+   opts:['Gajah','Sapi','Paus','Jerapah'], ans:0,
+   p:'Gajah minangka kewan darat sing paling gedhe ing donya.'},
+],
+
+/* ── Wulangan 3-4: Tembang Dolanan lanjutan + Tembang Nasional ── */
+2: [
+  {em:'😊',sub:'Tegese Tembung',diff:'gampil',
+   ctx:'Ora jemu-jemu karo mesem ngguyu.',
+   q:'Tegese tembung "jemu" yaiku ....',
+   opts:['Males','Nesu','Jeleh','Bungah'], ans:2,
+   p:'"Jemu" tegese jeleh utawa bosen. Dadi "ora jemu-jemu" = ora bosen-bosen.'},
+  {em:'💊',sub:'Ejaan Ukara',diff:'tengah',
+   q:'obat – tuku – Dani. Ukara sing trep yaiku ....',
+   opts:['Dani obat tuku','tuku obat Dani','Dani tuku obat','obat Dani tuku'], ans:2,
+   p:'Ukara sing bener: "Dani tuku obat." — subjek + predikat + objek.'},
+  {em:'😈',sub:'Tegese Tembung',diff:'gampil',
+   q:'Tembung "nakal" padha tegese karo ....',
+   opts:['Ndugal','Ayu','Nggragas','Pinter'], ans:0,
+   p:'"Nakal" sinonime "ndugal" — bocah sing seneng gawe ala utawa ora manut.'},
+  {em:'🐀',sub:'Swara Kewan',diff:'gampil',
+   q:'Kewan sing swarane cit cit cit yaiku ....',
+   opts:['Tikus','Semut','Gajah','Kucing'], ans:0,
+   p:'Tikus nduweni swara cit-cit. Gajah swarane ngembung, kucing swarane meong.'},
+  {em:'🐔',sub:'Kosakata Kewan',diff:'gampil',
+   q:'Pitik lanang arane jago, yen pitik wedok arane ....',
+   opts:['Kuthuk','Meri','Babon','Betet'], ans:2,
+   p:'"Babon" yaiku pitik wedok diwasa. Kuthuk = anak pitik; meri = anak bebek.'},
+  {em:'🥗',sub:'Ejaan/Kosakata',diff:'tengah',
+   q:'Difa ... sambel rujak. Tembung sing trep kanggo ngisi ceceg-ceceg yaiku ....',
+   opts:['Ngidak','Ngulek','Nggodhog','Nggoreng'], ans:1,
+   p:'"Ngulek" tegese nggiling bumbu nganggo ulekan. Sambel rujak dienggo ngulek.'},
+  {em:'📖',sub:'Perangan Tembang',diff:'tengah',
+   q:'Tembang "Prau Layar" nyritakake nalika wisata ing ....',
+   opts:['Pantai','Gunung','Pasar','Sawah'], ans:0,
+   p:'Tembang "Prau Layar" nyritakake bocah-bocah wisata ing pantai numpak prau.'},
+  {em:'🎵',sub:'Instrumen Musik',diff:'tengah',
+   q:'Tembang "Gambang Suling" nyritakake unine suling. Piranti suling yaiku ....',
+   opts:['Trompet','Klarinet','Seruling/suling','Gitar'], ans:2,
+   p:'Suling yaiku piranti musik tiup sing digawe saka pring (bambu).'},
+  {em:'📚',sub:'Perpustakaan',diff:'tengah',
+   ctx:'Gambar bocah loro lagi maca buku ing meja kanthi rak buku ing mburi.',
+   q:'Tina lan Laras nembe ing ....',
+   opts:['Perpustakaan','Kelas','Kantin','Laboratorium'], ans:0,
+   p:'Papan karo rak buku lan meja maca yaiku perpustakaan.'},
+  {em:'🎯',sub:'Tembang Dolanan',diff:'tengah',
+   q:'Tembang "Prau Layar" nyebutake "byak byuk byak" — swara saka ....',
+   opts:['Banyu','Angin','Prau','Ombak'], ans:0,
+   p:'"Byak byuk byak" yaiku swara banyu segara sing dikeplak layar utawa dayung prau.'},
+],
+
+/* ── Sumatif: Soal Campuran Pungkasan Semester ── */
+3: [
+  {em:'🎵',sub:'Tembang Dolanan',diff:'gampil',
+   q:'Gambang suling kumandhang swarane thulat-thulit kepenak unine. Munine gambang suling yaiku ....',
+   opts:['Thulat-thulit','Thung-thak','Neng-nong','Cit-cit'], ans:0,
+   p:'Ing tembang "Gambang Suling", swara suling digambarake "thulat-thulit".'},
+  {em:'🌾',sub:'Crita Tembang',diff:'tengah',
+   ctx:'Aku nduwe pitik, pitik tukung saben dina, dakpakani jagung petok gogok petok petok.',
+   q:'Pakanane pitik yaiku ....',
+   opts:['Sega','Beras','Jagung','Kacang'], ans:2,
+   p:'Saka tembang kasebut, pitik dikeki pakan jagung saben dina.'},
+  {em:'🐓',sub:'Crita Tembang',diff:'tengah',
+   ctx:'Aku nduwe pitik, pitik tukung saben dina, dakpakani jagung petok gogok petok petok.',
+   q:'Tembang kasebut nyritakake babagan ....',
+   opts:['Panganan jagung','Pitik tukung','Swarane pitik','Golek pakan'], ans:1,
+   p:'Tembang "Aku Nduwe Pitik" nyritakake babagan pitik tukung (pitik tanpa buntut).'},
+  {em:'🐓',sub:'Kosakata',diff:'tengah',
+   q:'Pitik tukung yaiku pitik tanpa ....',
+   opts:['Buntut','Jengger','Jalu','Cucuk'], ans:0,
+   p:'"Tukung" tegese tanpa buntut. Dadi pitik tukung yaiku pitik sing ora nduweni buntut.'},
+  {em:'📜',sub:'Wulangan Moral',diff:'tengah',
+   q:'Sing wateke becik ing crita "Gajah lan Semut" yaiku ....',
+   opts:['Gajah','Semut','Kancil','Singa'], ans:1,
+   p:'Semut nduweni watak becik — gelem kerja keras, ora sombong, lan gelem tulung.'},
+  {em:'🦌',sub:'Tembang Dolanan',diff:'tengah',
+   q:'Tembang dolanan sing nyritakake bab kewan yaiku ....',
+   opts:['Gundhul Pacul','Menthog-Menthog','Aku Nduwe Pitik','Prau Layar'], ans:2,
+   p:'"Aku Nduwe Pitik" nyritakake babagan pitik — kewan ingon-ingon.'},
+  {em:'🏫',sub:'Tumindak Becik',diff:'gampil',
+   q:'Tumindak becik ing sekolah tuladhane yaiku ....',
+   opts:['Nindakake piket kelas','Guyonan karo kanca','Ora mlebu sekolah','Ngganggu kanca'], ans:0,
+   p:'Nindakake piket kelas yaiku tumindak becik — njaga kebersihan lan tanggung jawab.'},
+  {em:'⛵',sub:'Tembang Prau Layar',diff:'tengah',
+   q:'Pranyatan sing bener saka tembang "Prau Layar" yaiku ....',
+   opts:['Nyritakake wisata ing pantai','Panulis numpak prau layar','Numpak praune dina Setu','Wisata ing gunung'], ans:0,
+   p:'"Prau Layar" nyritakake wisata ing pantai, katon saka lirik "angliyak numpak prau layar".'},
+  {em:'✅',sub:'Bener Salah',diff:'tengah',
+   q:'Tandha ( | ) tegese mandheg sawetara. Pranyatan iki ....',
+   opts:['Bener','Salah','Setengah bener','Ora jelas'], ans:0,
+   p:'Bener. Tandha (|) ing tembang tegese mandheg sawetara/jedha.'},
+  {em:'📖',sub:'Jinis Teks',diff:'tengah',
+   q:'"Malin Kundang" klebu jinis crita ....',
+   opts:['Fabel','Dongeng/legenda','Geguritan','Paribasan'], ans:1,
+   p:'"Malin Kundang" klebu crita rakyat/legenda, dudu fabel (fabel iku crita kewan).'},
+  {em:'🎵',sub:'Jinis Tembang',diff:'tengah',
+   q:'"Prau Layar" klebu jinis tembang ....',
+   opts:['Nasional','Dolanan','Wajib','Daerah'], ans:1,
+   p:'"Prau Layar" klebu tembang dolanan Jawa, dudu tembang nasional.'},
+  {em:'🐟',sub:'Crita Fabel',diff:'tengah',
+   q:'Iwak-iwak ing crita "Iwak, Yuyu, lan Bango" urip ana ing ....',
+   opts:['Segara','Kali/kolam','Sawah','Hutan'], ans:1,
+   p:'Iwak, yuyu, lan bango urip ing kali utawa kolam banyu.'},
+  {em:'👶',sub:'Tembang Dolanan',diff:'gampil',
+   q:'Tembang dolanan ditembangake dening bocah ....',
+   opts:['Cilik','Diwasa','Tuwa','Guru'], ans:0,
+   p:'Tembang dolanan pancen ditembangake dening bocah cilik nalika padha dolanan.'},
+  {em:'🦆',sub:'Kewan',diff:'gampil',
+   q:'Cacahe sikil menthog yaiku ....',
+   opts:['2','4','6','8'], ans:0,
+   p:'Menthog (bebek) nduweni 2 sikil kaya unggas liyane.'},
+  {em:'📝',sub:'Kewajiban Murid',diff:'gampil',
+   q:'Sinau kuwi kuwajibane para ....',
+   opts:['Guru','Murid','Wong tuwa','Kepala sekolah'], ans:1,
+   p:'Sinau minangka kuwajiban para murid supaya tambah pinter lan pinunjul.'},
+  {em:'🚫',sub:'Tembang Piwulang',diff:'tengah',
+   q:'Wajibe dadi murid ora kena pijer pamit. Tembang kuwi ditujokake kanggo ....',
+   opts:['Murid','Guru','Kanca','Wong tuwa'], ans:0,
+   p:'Lirik kasebut aweh piwulang marang murid supaya sregep lan ora pijer pamit.'},
+  {em:'🌊',sub:'Tembang Prau Layar',diff:'tengah',
+   q:'Ing tembang "Prau Layar", byak byuk byak iku swara saka ....',
+   opts:['Banyu','Angin','Prau','Layar'], ans:0,
+   p:'"Byak byuk byak" nggambarake swara banyu segara sing keplak prau.'},
+  {em:'🎵',sub:'Tembang Gambang Suling',diff:'tengah',
+   q:'Gambang suling kumandhang swarane. Sing dinikmati saka gambang suling, yaiku ....',
+   opts:['Bentuke','Swarane','Bolongane','Ukurane'], ans:1,
+   p:'Sing dinikmati saka suling utamane yaiku swarane sing thulat-thulit kepenak.'},
+  {em:'🌾',sub:'Tembang Lir-Ilir',diff:'tengah',
+   ctx:'Lir ilir lir ilir tandure wis sumilir, tak ijo royo-royo tak sengguh temanten anyar.',
+   q:'Sajrone tembang, cah angon menek uwit ....',
+   opts:['Randu','Krambil','Blimbing','Jati'], ans:2,
+   p:'Ing tembang "Lir-Ilir", cah angon disuruh menek uwit blimbing.'},
+  {em:'💚',sub:'Tembang Lir-Ilir',diff:'tengah',
+   q:'Rupa tandurane ing tembang Lir-Ilir yaiku ....',
+   opts:['Ijo royo-royo','Abang mbranang','Ireng thuntheng','Kuning emas'], ans:0,
+   p:'"Tak ijo royo-royo" — tandurane wernane ijo royo-royo tegese subur.'},
+  {em:'🏃',sub:'Pituduh Becik',diff:'gampil',
+   q:'Menawa didangu bapak lan ibu guru becike ....',
+   opts:['Rasah digagas','Dirungokne','Diwangsuli','Ditinggal lunga'], ans:1,
+   p:'Menawa bapak/ibu guru ngendika, becike dirungokne kanthi seksama.'},
+  {em:'🦆',sub:'Tembang Menthog',diff:'gampil',
+   q:'Lakune menthog ing tembang "Menthog-Menthog" yaiku ....',
+   opts:['Megal-megol','Banter','Mbrangkang','Mabur'], ans:0,
+   p:'Lakune menthog ing tembang digambarake megal-megol amarga cendak sikile.'},
+  {em:'🌅',sub:'Pituduh Becik',diff:'gampil',
+   q:'Sadurung mangkat sekolah, becik … marang wong tuwa.',
+   opts:['Uluk salam','Jaluk sangu','Lunga tanpa pamit','Dolanan dhisik'], ans:0,
+   p:'Becike pamit lan uluk salam marang wong tuwa sadurunge mangkat sekolah.'},
+  {em:'🐑',sub:'Kosakata Kewan',diff:'tengah',
+   ctx:'Rista nduwe wedhus. Jenenge Cimol. Wernane putih karo soklat.',
+   q:'Wedhuse Rista jenenge ....',
+   opts:['Soklat','Putih','Cimol','Wedhus'], ans:2,
+   p:'Wedhuse Rista jenenge Cimol — iku jeneng wedhuse, dudu wernane.'},
+  {em:'🌿',sub:'Tembang Gundhul Pacul',diff:'tengah',
+   q:'Tembang "Gundhul-Gundhul Pacul" nyritakake babagan sega ing wakul sing ....',
+   opts:['Mateng','Ngglimpang','Putih','Enak'], ans:1,
+   p:'Ing tembang, sega ing wakul ngglimpang (tumpah/rubuh) amarga bocah kesed.'},
+  {em:'🐣',sub:'Kosakata',diff:'gampil',
+   ctx:'Petok gogok petok petok ngendhog ...',
+   q:'Tembung kanggo nutukake tembang yaiku ....',
+   opts:['Kabeh','Dhewe','Siji','Akeh'], ans:2,
+   p:'Tembung "siji" kanggo nutukake "petok gogok petok petok ngendhog siji".'},
+  {em:'🎨',sub:'Tembang Aku Nduwe Pitik',diff:'gampil',
+   ctx:'Aku nduwe pitik cilik wulune brintik, cucuk kuning jengger abang tarung mesthi menang.',
+   q:'Sing wernane kuning yaiku ....',
+   opts:['Jengger','Wulu','Cucuk','Buntut'], ans:2,
+   p:'"Cucuk kuning" — cucuke pitik kuwi sing wernane kuning.'},
+  {em:'🍎',sub:'Kosakata',diff:'tengah',
+   ctx:'Doni ngopek pelem kanthi cara ....',
+   q:'Cara Doni ngopek pelem sing paling trep yaiku ....',
+   opts:['Dibalang sandhal','Nganggo genter','Menek uwit','Diidak'], ans:2,
+   p:'Cara paling trep ngopek pelem yaiku menek uwit amarga aman lan bisa milih.'},
+  {em:'🚂',sub:'Pakaryan',diff:'gampil',
+   q:'Pak Heru saben esuk tindak stasiun. Pak Heru nyupir sepur. Pagaweyane Pak Heru yaiku ....',
+   opts:['Nahkoda','Masinis','Pilot','Sopir bus'], ans:1,
+   p:'Wong sing nyupir (nglakokake) sepur diarani masinis.'},
+  {em:'📐',sub:'Ejaan Ukara',diff:'tengah',
+   ctx:'Papat nuli lima, lungguhe sing ....',
+   q:'Tembung sing trep kanggo ngisi yaiku ....',
+   opts:['Anteng','Meneng','Tata','Ayem'], ans:0,
+   p:'"Papat nuli lima, lungguhe sing anteng" — saka tembang "Lir-Ilir".'},
+  {em:'🎹',sub:'Instrumen',diff:'tengah',
+   q:'Gambar kasebut nudhuhake piranti kanggo ....',
+   opts:['Sinau','Turu','Masak','Dolanan'], ans:2,
+   p:'Piranti masak kaya kompor lan wajan digunakake kanggo masak ing pawon.'},
+  {em:'🌿',sub:'Wulangan Umum',diff:'gampil',
+   q:'Tembang dolanan bisa nambahi … nalika aktivitas.',
+   opts:['Lungkrah','Semangat','Mumet','Ngantuk'], ans:1,
+   p:'Tembang dolanan gawe bocah-bocah tambah semangat nalika padha dolanan.'},
+  {em:'👫',sub:'Tembang Dolanan',diff:'gampil',
+   q:'Tembang dolanan kepenake ditembangake kanthi ....',
+   opts:['Dhewekan','Rame-rame','Nangis','Turu'], ans:1,
+   p:'Tembang dolanan kepenake ditembangake bebarengan (rame-rame) karo kanca-kanca.'},
+  {em:'🎵',sub:'Ejaan Tembung',diff:'tengah',
+   ctx:'k–i–d–a–n–g t–a–l–u–n',
+   q:'Wacane ejanan kasebut yaiku ....',
+   opts:['Kidang talun','Talun kidang','Kijang dalan','Kuda talun'], ans:0,
+   p:'k-i-d-a-n-g = "kidang", t-a-l-u-n = "talun". Dadi "kidang talun".'},
+  {em:'|',sub:'Tandha Baca',diff:'gampil',
+   q:'Tandha (|) tegese ....',
+   opts:['Mandheg sawetara','Pungkasan ukara','Nanya','Nggumun'], ans:0,
+   p:'Tandha (|) ing tembang utawa geguritan tegese mandheg sawetara (jedha/pause).'},
+  {em:'🦌',sub:'Crita Tembang',diff:'tengah',
+   q:'Ing tembang "Kidang Talun", si kidang pakanane ....',
+   opts:['Suket','Jagung','Pari','Singkong'], ans:0,
+   p:'Kidang (kijang) pakanane suket (rumput) ing talun (hutan/padang).'},
+  {em:'💪',sub:'Pakulinan Becik',diff:'gampil',
+   q:'Linggih ngrungkuk tangane ing pupu utawa meja diarani ....',
+   opts:['Sempok','Lonjong','Rapet','Jegod'], ans:0,
+   p:'"Sempok" tegese linggih ngrungkuk karo tangane ing pupu utawa meja.'},
+  {em:'🪣',sub:'Kosakata',diff:'gampil',
+   q:'Wakul yaiku piranti kanggo wadhah ....',
+   opts:['Sega','Banyu','Iwak','Sayur'], ans:0,
+   p:'Wakul yaiku piranti kanggo wadhah sega sing digawe saka pring utawa kayu.'},
+  {em:'⛵',sub:'Tembang Prau Layar',diff:'tengah',
+   ctx:'Alon praune wis nengah, byak byuk byak banyu binelah, ora jemu-jemu karo mesem ngguyu.',
+   q:'Tutukna tembang: Alon praune wis nengah, byak byuk byak banyu binelah. Tembang iki irah-irahane ....',
+   opts:['Prau Layar','Gambang Suling','Kidang Talun','Menthog-Menthog'], ans:0,
+   p:'Lirik kasebut saka tembang "Prau Layar" — nyritakake prau mlaku ing segara.'},
+  {em:'🎵',sub:'Tegese Tembang',diff:'tengah',
+   q:'Apa kang dimaksud tembang dolanan?',
+   opts:['Tembang kanggo nangis','Tembang sing ditembangake bocah nalika dolanan','Tembang kanggo upacara','Tembang nasional'], ans:1,
+   p:'Tembang dolanan yaiku tembang sing biasane ditembangake bocah-bocah nalika dolanan.'},
+  {em:'🦆',sub:'Kewan',diff:'tengah',
+   ctx:'Gambar bebek/menthog.',
+   q:'Apa jeneng kewan ing gambar kasebut?',
+   opts:['Pitik','Menthog/bebek','Prenjak','Dara'], ans:1,
+   p:'Bebek utawa menthog nduweni cucuk lebar, sikil selaput, lan lakune megal-megol.'},
+  {em:'🛏️',sub:'Kosakata',diff:'gampil',
+   q:'Sebutna piranti kanggo turu!',
+   opts:['Klasa/kasur','Meja makan','Lemari','Kursi'], ans:0,
+   p:'Piranti kanggo turu yaiku klasa (tikar), kasur, bantal, lan guling.'},
+  {em:'📝',sub:'Ejaan Ukara',diff:'tengah',
+   q:'Urutna ukara iki: sesorah – Lia – melu – lomba. Ukara sing trep yaiku ....',
+   opts:['Sesorah lomba melu Lia','Lia melu lomba sesorah','Lomba sesorah Lia melu','Melu Lia lomba sesorah'], ans:1,
+   p:'"Lia melu lomba sesorah" — urutan: Subjek (Lia) + Predikat (melu) + Objek (lomba sesorah).'},
+  {em:'🤝',sub:'Crita Fabel',diff:'tengah',
+   q:'Apa panyebabe Semut gelem nulungi Manuk?',
+   opts:['Amarga Manuk pinter nyanyi','Amarga Manuk tau nulungi Semut','Amarga Semut wedi','Amarga Manuk sugih'], ans:1,
+   p:'Semut gelem nulungi Manuk amarga Manuk dhisik tau nulungi Semut nalika keli.'},
+  {em:'🏫',sub:'Wong Tuwa Sekolah',diff:'gampil',
+   q:'Sapa wong tuwamu ing sekolah?',
+   opts:['Pedagang kantin','Satpam','Bapak/Ibu guru','Tukang kebun'], ans:2,
+   p:'Bapak lan Ibu guru minangka wong tuwa kita ing sekolah — sing nggulawenthah lan mulang.'},
+  {em:'📜',sub:'Ejaan',diff:'tengah',
+   ctx:'Kidang talun karo tikus pithi.',
+   q:'Ejanen miturut wandane ukara "Kidang talun karo tikus pithi" ....',
+   opts:['Ki-dang ta-lun ka-ro ti-kus pi-thi','Ki-da-ng ta-lu-n ka-ro ti-ku-s','Kid-ang tal-un kar-o tik-us pit-hi','Kidang talun karo tikus pithi'], ans:0,
+   p:'Wanda (suku kata): Ki-dang ta-lun ka-ro ti-kus pi-thi.'},
+  {em:'🌊',sub:'Tembang Prau Layar HOTS',diff:'hots',
+   ctx:'Ya kanca ing nggisik gembira, alerap-lerap banyune segara, angliyak numpak prau layar, ing dina Minggu keh pariwisata.',
+   q:'Apa wos tembang dolanan kasebut?',
+   opts:['Bocah seneng dolanan ing kali','Wisata ing pantai dina Minggu numpak prau','Bocah-bocah golek iwak','Lelungan menyang gunung'], ans:1,
+   p:'Wos tembang: bocah-bocah wisata ing pinggir segara (nggisik), numpak prau layar ing dina Minggu.'},
+  {em:'🚿',sub:'Kegiyatan',diff:'gampil',
+   ctx:'Gambar bocah lanang lagi ngumbah/nyirami kothak.',
+   q:'Apa sing ditindakake Vino?',
+   opts:['Masak','Nyapu latar','Ngumbah kothak/wadhah','Nyirami tanaman'], ans:2,
+   p:'Saka gambar, Vino lagi ngumbah kothak nganggo banyu.'},
+  {em:'🎵',sub:'Wulangan Campuran',diff:'tengah',
+   q:'Tembang dolanan sing nyebutake piranti pacul lan wakul yaiku ....',
+   opts:['Gundhul-Gundhul Pacul','Menthog-Menthog','Prau Layar','Gambang Suling'], ans:0,
+   p:'"Gundhul-Gundhul Pacul" nyebutake pacul lan wakul. "Gundhul pacul cul…gembelengan, wakul ngglimpang…"'},
+],
+
+};
+
+/* ══ MATERI ══ */
+const MATERI = [
+  {icon:'🎵', title:'Tembang Dolanan', body:`
+    <p>Tembang dolanan yaiku tembang sing biasane ditembangake bocah-bocah nalika padha dolanan. Tembang dolanan nduweni manfaat:</p>
+    <p>• Kanggo panglipur lan suka-suka<br>• Ngemot piwulang becik<br>• Nambahi semangat nalika dolanan</p>
+    <div class="contoh-box">Tuladha: Gundhul-Gundhul Pacul, Menthog-Menthog, Prau Layar, Kidang Talun, Gambang Suling, Aku Nduwe Pitik</div>
+  `, tags:['Tembang','Dolanan','Kelas 1']},
+  {icon:'🐘', title:'Crita Fabel', body:`
+    <p>Fabel yaiku crita kang paraga utamane kewan. Ing fabel, kewan bisa omong lan piker kaya manungsa. Tuladha: Semut lan Gajah, Iwak lan Bango.</p>
+    <p>Watake paraga: becik (protagonis) lan ala (antagonis). Saben crita nduweni <strong>amanat</strong> (piwulang).</p>
+    <div class="contoh-box">Tuladha amanat: aja sombong, kudu guyub rukun, tetulung marang kanca.</div>
+  `, tags:['Fabel','Crita','Moral']},
+  {icon:'📝', title:'Ejaan lan Tanda Baca', body:`
+    <p>• Tandha (|) tegese mandheg sawetara (jedha) ing tembang.<br>• Tandha (||) kanggo pungkasane baris utawa pada.<br>• Ukara sing trep: Subjek + Predikat + Objek (tuladha: Dani tuku obat).</p>
+    <div class="contoh-box">Ejaan wanda: Ki-dang ta-lun ka-ro ti-kus pi-thi</div>
+  `, tags:['Ejaan','Tanda Baca','Ukara']},
+  {icon:'🐔', title:'Kosakata Kewan', body:`
+    <p>Kewan lan jeneng/swarane sing perlu dingerteni:</p>
+    <p>• Pitik lanang = jago; pitik wedok = babon; anak pitik = kuthuk<br>• Bebek/menthog swarane kwek-kwek, sikile 2, lakune megal-megol<br>• Tikus swarane cit-cit; gajah swarane ngembung<br>• Pitik tukung = pitik tanpa buntut</p>
+    <div class="contoh-box">Kidang = kijang; wedhus = kambing; menthog = bebek</div>
+  `, tags:['Kewan','Kosakata','Kelas 1']},
+  {icon:'⛵', title:'Tembang Prau Layar', body:`
+    <p>Tembang "Prau Layar" nyritakake wisata ing pantai (nggisik) numpak prau layar dina Minggu. Lirik: <em>Ya kanca ing nggisik gembira, alerap-lerap banyune segara, angliyak numpak prau layar, ing dina Minggu keh pariwisata.</em></p>
+    <p>"Byak byuk byak" = swara banyu segara. "Ora jemu-jemu" = ora bosen.</p>
+    <div class="contoh-box">Tandha (|) ing: "Ora jemu-jemu (|) karo mesem ngguyu ‖"</div>
+  `, tags:['Prau Layar','Tembang','Pantai']},
+];
+
+/* ══ STATE ══ */
+let curWulangan = 1;
+let pool = [], curIdx = 0, answered = false;
+let benar = 0, salah = 0, streak = 0;
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function setWulangan(w, el){
+  curWulangan = w;
+  document.querySelectorAll('.wul-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  resetSession();
+}
+
+function resetSession(){
+  benar=0; salah=0; streak=0;
+  updateScorebar();
+  pool = shuffle(SOAL[curWulangan]).slice(0,10).map((s,i)=>({...s,_no:i}));
+  curIdx=0; answered=false;
+  renderSoal();
+}
+
+function updateScorebar(){
+  document.getElementById('sc-benar').textContent=benar;
+  document.getElementById('sc-salah').textContent=salah;
+  document.getElementById('sc-streak').textContent=streak+'🔥';
+}
+
+function renderSoal(){
+  const area = document.getElementById('soal-area');
+  if(curIdx >= pool.length){ showResults(area); return; }
+  const s = pool[curIdx];
+  answered=false;
+  const total=pool.length, pct=Math.round((curIdx+1)/total*100);
+  document.getElementById('prog-label').textContent=`Soal ${curIdx+1} saka ${total}`;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('progBar').style.width=pct+'%';
+  document.getElementById('sc-no').textContent=`${curIdx+1}/${total}`;
+
+  const diffMap={gampil:'diff-gampil Gampil',tengah:'diff-tengah Tengah',angel:'diff-angel Angel',hots:'diff-hots HOTS'};
+  const [dClass, dLabel]=(diffMap[s.diff]||'diff-tengah Tengah').split(' ');
+  const opts = s.opts.map((o,i)=>`
+    <button class="option" onclick="pick(${i})" id="opt${i}">
+      <span class="opt-letter">${'ABCD'[i]}</span>${o}
+    </button>`).join('');
+
+  area.innerHTML=`
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="q-badge">Soal ${curIdx+1}</span>
+        <span class="q-sub">${s.sub}</span>
+        <span class="${dClass}">${dLabel}</span>
+      </div>
+      <span class="q-icon">${s.em||'📜'}</span>
+      ${s.ctx?`<div class="q-ctx">${s.ctx}</div>`:''}
+      <div class="q-text">${s.q}</div>
+      <div class="options">${opts}</div>
+      <div class="feedback" id="fb"></div>
+      <div class="pembahasan" id="pb"><strong>Katrangan:</strong> ${s.p}</div>
+      <div class="nav-row" id="navRow" style="display:none">
+        <button class="btn amber" onclick="showHint()">💡 Katrangan</button>
+        <button class="btn primary" onclick="nextSoal()">${curIdx===pool.length-1?'Deleng Asil 🏆':'Soal Sabanjure →'}</button>
+      </div>
+    </div>`;
+}
+
+function pick(i){
+  if(answered) return;
+  answered=true;
+  const s=pool[curIdx];
+  const fb=document.getElementById('fb');
+  const pb=document.getElementById('pb');
+  ['A','B','C','D'].forEach((_,j)=>{
+    const el=document.getElementById('opt'+j);
+    el.classList.add('disabled');
+    if(j===s.ans) el.classList.add('correct');
+    else if(j===i && i!==s.ans) el.classList.add('wrong');
+  });
+  if(i===s.ans){
+    benar++; streak++;
+    fb.textContent='✅ Bener banget!'; fb.className='feedback correct show';
+    if(streak>=3) showToast('🔥 Streak '+streak+'! Apik tenan!');
+  } else {
+    salah++; streak=0;
+    fb.textContent='❌ Durung bener. Wangsulan sing trep: '+s.opts[s.ans];
+    fb.className='feedback wrong show';
+  }
+  updateScorebar();
+  document.getElementById('navRow').style.display='flex';
+}
+
+function showHint(){
+  const pb=document.getElementById('pb');
+  pb.classList.add('show');
+}
+
+function nextSoal(){ curIdx++; renderSoal(); }
+
+function showResults(area){
+  const total=pool.length, pct=Math.round(benar/total*100);
+  const grade = pct>=90?['🏆','Luar Biasa!','#15803d']:
+                pct>=75?['🌟','Apik Banget!','#0284c7']:
+                pct>=60?['👍','Lumayan!','#d97706']:
+                        ['💪','Terusna Sinau!','#dc2626'];
+  area.innerHTML=`
+    <div class="results">
+      <span class="result-icon">${grade[0]}</span>
+      <div class="result-score" style="color:${grade[2]}">${pct}%</div>
+      <div class="result-grade" style="color:${grade[2]}">${grade[1]}</div>
+      <div class="result-desc">Bener ${benar} saka ${total} soal</div>
+      <div class="result-breakdown">
+        <div class="rb-item"><div class="rb-val" style="color:var(--correct)">${benar}</div><div style="font-size:.7rem;color:#86efac;font-weight:700">BENER</div></div>
+        <div class="rb-item"><div class="rb-val" style="color:var(--wrong)">${salah}</div><div style="font-size:.7rem;color:#86efac;font-weight:700">SALAH</div></div>
+        <div class="rb-item"><div class="rb-val" style="color:var(--amber)">${pct}%</div><div style="font-size:.7rem;color:#86efac;font-weight:700">SKOR</div></div>
+      </div>
+      <div class="nav-row">
+        <button class="btn primary" onclick="resetSession()">🔄 Mbaleni Gladhen</button>
+        <button class="btn amber" onclick="switchTab('materi')">📖 Sinau Materi</button>
+      </div>
+    </div>`;
+  document.getElementById('progBar').style.width='100%';
+}
+
+function switchTab(t){
+  document.getElementById('tab-latihan').style.display=t==='latihan'?'':'none';
+  document.getElementById('tab-materi').style.display=t==='materi'?'':'none';
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',
+    (i===0&&t==='latihan')||(i===1&&t==='materi')));
+  if(t==='materi') renderMateri();
+}
+
+function renderMateri(){
+  const area=document.getElementById('materi-area');
+  area.innerHTML=MATERI.map(m=>`
+    <div class="materi-card">
+      <h3>${m.icon} ${m.title}</h3>
+      ${m.body}
+      <div style="margin-top:10px">${m.tags.map(t=>`<span class="materi-tag">${t}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+resetSession();
+</script>
+</body>
+</html>
